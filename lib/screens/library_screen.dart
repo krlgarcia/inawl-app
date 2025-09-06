@@ -6,17 +6,29 @@ class LibraryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // List of your images
+    final List<String> images = [
+      'assets/images/gorilla.jpg',
+      'assets/images/aloy1.png',
+      'assets/images/aloy2.png',
+      'assets/images/hther.jpg',
+      'assets/images/nee-san.jpg',
+      'assets/images/speed.jpg',
+      'assets/images/tunnel.jpg',
+      'assets/images/burjer.jpg',
+      'assets/images/bxw.jpg',
+      'assets/images/ruwoghxy.jpg',
+      'assets/images/zamn.png',
+      'assets/images/isekai.jpg',
+    ];
+
     return Scaffold(
       body: Column(
         children: [
-          // Top patterned placeholder
-          Container(
-            width: double.infinity,
-            height: 80,
-            color: Colors.brown[300],
-            alignment: Alignment.center,
+          // Top patterned banner
+          ClipRRect(
             child: Image.asset(
-              'assets/images/gorilla.jpg', // <-- TOP pattern image file
+              'assets/images/gorilla.jpg',
               fit: BoxFit.cover,
               width: double.infinity,
               height: 80,
@@ -48,7 +60,7 @@ class LibraryScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // Grid placeholders
+                  // Grid of actual images
                   Expanded(
                     child: GridView.builder(
                       gridDelegate:
@@ -57,15 +69,13 @@ class LibraryScreen extends StatelessWidget {
                         mainAxisSpacing: 15,
                         crossAxisSpacing: 15,
                       ),
-                      itemCount: 12, // number of placeholders
+                      itemCount: images.length,
                       itemBuilder: (context, index) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Center(
-                            child: Text("Image"),
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            images[index],
+                            fit: BoxFit.cover,
                           ),
                         );
                       },
@@ -76,14 +86,10 @@ class LibraryScreen extends StatelessWidget {
             ),
           ),
 
-          // Bottom patterned placeholder
-          Container(
-            width: double.infinity,
-            height: 80,
-            color: Colors.brown[300],
-            alignment: Alignment.center,
+          // Bottom patterned banner
+          ClipRRect(
             child: Image.asset(
-              'assets/images/gorilla.jpg', // <-- TOP pattern image file
+              'assets/images/gorilla.jpg',
               fit: BoxFit.cover,
               width: double.infinity,
               height: 80,
