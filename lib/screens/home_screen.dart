@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inawl_app/screens/library_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -87,8 +88,15 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 15),
 
-                    _buildButton('Browse Library'),
+                    _buildButton('Browse Library', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const LibraryScreen()),
+                      );
+                    }),
+
                     const SizedBox(height: 10),
+
                     _buildButton('About Inaul'),
                   ],
                 ),
@@ -115,21 +123,19 @@ class HomeScreen extends StatelessWidget {
   }
 
   // Button builder
-  static Widget _buildButton(String text) {
+  static Widget _buildButton(String text, [VoidCallback? onPressed]) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFD17A45), // button color
-          foregroundColor: Colors.white, // text color
+          backgroundColor: const Color(0xFFD17A45),
+          foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        onPressed: () {
-          // TODO: add navigation or action
-        },
+        onPressed: onPressed ?? () {}, // ✅ fallback to empty function
         child: Text(
           text,
           style: const TextStyle(fontSize: 16),
