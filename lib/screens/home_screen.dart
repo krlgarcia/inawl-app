@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inawl_app/screens/library_screen.dart';
+import 'package:inawl_app/screens/about_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -97,7 +98,12 @@ class HomeScreen extends StatelessWidget {
 
                     const SizedBox(height: 10),
 
-                    _buildButton('About Inaul'),
+                    _buildButton('About Inaul', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AboutScreen()),
+                      );
+                    }),
                   ],
                 ),
               ),
