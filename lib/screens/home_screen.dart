@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:inawl_app/screens/library_screen.dart';
-import 'package:inawl_app/screens/about_screen.dart';
+import 'package:inawl_app/core/constants/app_constants.dart';
+import 'package:inawl_app/core/routes/app_routes.dart';
+import 'package:inawl_app/widgets/pattern_banner.dart';
+import 'package:inawl_app/widgets/custom_button.dart';
+import 'package:inawl_app/widgets/section_title.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -11,99 +14,55 @@ class HomeScreen extends StatelessWidget {
       body: Column(
         children: [
           // Top patterned image
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.zero,
-              bottomRight: Radius.zero,
-            ),
-            child: Image.asset(
-              'assets/images/gorilla.jpg', // <-- TOP pattern image file
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 80,
-            ),
-          ),
+          const PatternBanner(isTop: true),
 
           // Main content
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(AppConstants.defaultPadding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 20),
-                    const Text(
+                    const SizedBox(height: AppConstants.spacingExtraLarge),
+                    Text(
                       'Welcome!',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineLarge,
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: AppConstants.spacingXXL),
 
                     // Section Title
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Inaul Identifier',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                    const SectionTitle(
+                      title: 'Inaul Identifier',
+                      subtitle: 'Identify the Inaul textile pattern',
                     ),
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Identify the Inaul textile pattern',
-                        style: TextStyle(color: Colors.black54),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: AppConstants.spacingLarge),
 
                     // Buttons
-                    _buildButton('Scan Inaul Fabric'),
-                    const SizedBox(height: 10),
-                    _buildButton('Upload Inaul Image'),
-                    const SizedBox(height: 45),
+                    const CustomButton(text: 'Scan Inaul Fabric'),
+                    const SizedBox(height: AppConstants.spacingMedium),
+                    const CustomButton(text: 'Upload Inaul Image'),
+                    const SizedBox(height: AppConstants.spacingXXXL),
 
                     // More Section
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'More',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                    const SectionTitle(
+                      title: 'More',
+                      subtitle: 'Learn more about Inaul!',
                     ),
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Learn more about Inaul!',
-                        style: TextStyle(color: Colors.black54),
-                      ),
+                    const SizedBox(height: AppConstants.spacingLarge),
+
+                    CustomButton(
+                      text: 'Browse Library',
+                      onPressed: () => AppRoutes.navigateToLibrary(context),
                     ),
-                    const SizedBox(height: 15),
 
-                    _buildButton('Browse Library', () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const LibraryScreen()),
-                      );
-                    }),
+                    const SizedBox(height: AppConstants.spacingMedium),
 
-                    const SizedBox(height: 10),
-
-                    _buildButton('About Inaul', () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const AboutScreen()),
-                      );
-                    }),
+                    CustomButton(
+                      text: 'About Inaul',
+                      onPressed: () => AppRoutes.navigateToAbout(context),
+                    ),
                   ],
                 ),
               ),
@@ -111,41 +70,8 @@ class HomeScreen extends StatelessWidget {
           ),
 
           // Bottom patterned image
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.zero,
-              topRight: Radius.zero,
-            ),
-            child: Image.asset(
-              'assets/images/gorilla.jpg', // <-- BOTTOM pattern image file
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 80,
-            ),
-          ),
+          const PatternBanner(isTop: false),
         ],
-      ),
-    );
-  }
-
-  // Button builder
-  static Widget _buildButton(String text, [VoidCallback? onPressed]) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFD17A45),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        onPressed: onPressed ?? () {}, // ✅ fallback to empty function
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 16),
-        ),
       ),
     );
   }

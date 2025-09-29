@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:inawl_app/core/constants/app_constants.dart';
 import 'package:inawl_app/widgets/back_button.dart' as custom;
+import 'package:inawl_app/widgets/pattern_banner.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -10,65 +12,31 @@ class AboutScreen extends StatelessWidget {
       body: Column(
         children: [
           // Top patterned banner
-          ClipRRect(
-            child: Image.asset(
-              'assets/images/gorilla.jpg',
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 80,
-            ),
-          ),
+          const PatternBanner(isTop: true),
 
           // Content
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(AppConstants.defaultPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Back button
                   const custom.BackButtonWidget(),
 
-                  const SizedBox(height: 10),
-                  const Text(
+                  const SizedBox(height: AppConstants.spacingMedium),
+                  Text(
                     'About Inaul',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppConstants.spacingExtraLarge),
 
                   // Scrollable text content
-                  const Expanded(
+                  Expanded(
                     child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Text(
-                            'Lorem ipsum dolor sit amet consectetur adipiscing elit. '
-                            'Quisque faucibus ex sapien vitae pellentesque sem placerat. '
-                            'In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. '
-                            'Pulvinar vivamus fringilla lacus nec metus bibendum egestas. '
-                            'Lacinia massa nisl malesuada lacinia integer nunc posuere. '
-                            'Ut hendrerit semper vel class aptent taciti sociosqu. '
-                            'Ad litora torquent per conubia nostra inceptos himenaeos.\n\n'
-                            'Lorem ipsum dolor sit amet consectetur adipiscing elit. '
-                            'Quisque faucibus ex sapien vitae pellentesque sem placerat. '
-                            'In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. '
-                            'Pulvinar vivamus fringilla lacus nec metus bibendum egestas. '
-                            'Lacinia massa nisl malesuada lacinia integer nunc posuere. '
-                            'Ut hendrerit semper vel class aptent taciti sociosqu. '
-                            'Ad litora torquent per conubia nostra inceptos himenaeos.\n\n'
-                            'Lorem ipsum dolor sit amet consectetur adipiscing elit. '
-                            'Quisque faucibus ex sapien vitae pellentesque sem placerat. '
-                            'In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. '
-                            'Pulvinar vivamus fringilla lacus nec metus bibendum egestas. '
-                            'Lacinia massa nisl malesuada lacinia integer nunc posuere. '
-                            'Ut hendrerit semper vel class aptent taciti sociosqu. '
-                            'Ad litora torquent per conubia nostra inceptos himenaeos.',
-                            style: TextStyle(color: Colors.black87),
-                          ),
-                        ],
+                      child: Text(
+                        _getAboutContent(),
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ),
                   ),
@@ -78,16 +46,23 @@ class AboutScreen extends StatelessWidget {
           ),
 
           // Bottom patterned banner
-          ClipRRect(
-            child: Image.asset(
-              'assets/images/gorilla.jpg',
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 80,
-            ),
-          ),
+          const PatternBanner(isTop: false),
         ],
       ),
     );
+  }
+
+  String _getAboutContent() {
+    return 'Inaul is a traditional handwoven textile from the Maguindanao people of Mindanao, Philippines. '
+        'This intricate fabric is characterized by its vibrant colors and geometric patterns, '
+        'which hold deep cultural significance and represent the rich heritage of the Maranao and Maguindanao communities.\n\n'
+        'The art of weaving Inaul has been passed down through generations, with each pattern telling '
+        'a unique story or representing specific cultural symbols. The textile is traditionally made '
+        'from cotton or silk threads, carefully dyed using natural materials to achieve the brilliant '
+        'colors that Inaul is known for.\n\n'
+        'Today, Inaul continues to be an important part of Filipino cultural identity and is recognized '
+        'as one of the country\'s most treasured traditional crafts. Through this app, we aim to help '
+        'preserve and promote awareness of this beautiful textile art form by providing tools to '
+        'identify different Inaul patterns and learn about their cultural significance.';
   }
 }

@@ -1,83 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:inawl_app/core/constants/app_constants.dart';
+import 'package:inawl_app/core/constants/image_assets.dart';
 import 'package:inawl_app/widgets/back_button.dart' as custom;
+import 'package:inawl_app/widgets/pattern_banner.dart';
 
 class LibraryScreen extends StatelessWidget {
   const LibraryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // List of your images
-    final List<String> images = [
-      'assets/images/gorilla.jpg',
-      'assets/images/aloy1.png',
-      'assets/images/aloy2.png',
-      'assets/images/hther.jpg',
-      'assets/images/nee-san.jpg',
-      'assets/images/speed.jpg',
-      'assets/images/tunnel.jpg',
-      'assets/images/burjer.jpg',
-      'assets/images/bxw.jpg',
-      'assets/images/ruwoghxy.jpg',
-      'assets/images/zamn.png',
-      'assets/images/isekai.jpg',
-    ];
-
     return Scaffold(
       body: Column(
         children: [
           // Top patterned banner
-          ClipRRect(
-            child: Image.asset(
-              'assets/images/gorilla.jpg',
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 80,
-            ),
-          ),
+          const PatternBanner(isTop: true),
 
           // Content
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(AppConstants.defaultPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Back Button
                   const custom.BackButtonWidget(),
 
-                  const SizedBox(height: 10),
-                  const Text(
+                  const SizedBox(height: AppConstants.spacingMedium),
+                  Text(
                     'Inaul Library',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
-                  const SizedBox(height: 5),
-                  const Text(
+                  const SizedBox(height: AppConstants.spacingSmall),
+                  Text(
                     'Browse through our growing Inaul Library!',
-                    style: TextStyle(color: Colors.black54),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppConstants.spacingExtraLarge),
 
                   // Grid of actual images
                   Expanded(
                     child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 15,
-                        crossAxisSpacing: 15,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: AppConstants.gridCrossAxisCount,
+                        mainAxisSpacing: AppConstants.gridMainAxisSpacing,
+                        crossAxisSpacing: AppConstants.gridCrossAxisSpacing,
                       ),
-                      itemCount: images.length,
+                      itemCount: ImageAssets.libraryImages.length,
                       itemBuilder: (context, index) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
-                            images[index],
-                            fit: BoxFit.cover,
-                          ),
-                        );
+                        return _buildImageCard(ImageAssets.libraryImages[index]);
                       },
                     ),
                   ),
@@ -87,15 +57,18 @@ class LibraryScreen extends StatelessWidget {
           ),
 
           // Bottom patterned banner
-          ClipRRect(
-            child: Image.asset(
-              'assets/images/gorilla.jpg',
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 80,
-            ),
-          ),
+          const PatternBanner(isTop: false),
         ],
+      ),
+    );
+  }
+
+  Widget _buildImageCard(String imagePath) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppConstants.imageBorderRadius),
+      child: Image.asset(
+        imagePath,
+        fit: BoxFit.cover,
       ),
     );
   }
