@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:inawl_app/core/constants/app_constants.dart';
 import 'package:inawl_app/widgets/back_button.dart';
 
@@ -114,6 +115,40 @@ class _CameraScreenState extends State<CameraScreen> {
         setState(() {
           _isProcessing = false;
         });
+      }
+    }
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        // TODO: Process the selected image for Inaul fabric identification
+        debugPrint('Image selected from gallery: ${image.path}');
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Image selected! Processing...'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error picking image from gallery: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error accessing gallery: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -305,15 +340,7 @@ class _CameraScreenState extends State<CameraScreen> {
                     bottom: 40,
                     left: 30,
                     child: GestureDetector(
-                      onTap: () {
-                        // TODO: Implement gallery functionality
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Gallery feature coming soon!'),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-                      },
+                      onTap: _pickImageFromGallery,
                       child: Container(
                         width: 56,
                         height: 56,
