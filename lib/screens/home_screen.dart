@@ -40,7 +40,10 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: AppConstants.spacingLarge),
 
                     // Buttons
-                    const CustomButton(text: 'Scan Inaul Fabric'),
+                    CustomButton(
+                      text: 'Scan Inaul Fabric',
+                      onPressed: () => AppRoutes.navigateToCamera(context),
+                    ),
                     const SizedBox(height: AppConstants.spacingMedium),
                     const CustomButton(text: 'Upload Inaul Image'),
                     const SizedBox(height: AppConstants.spacingXXXL),
