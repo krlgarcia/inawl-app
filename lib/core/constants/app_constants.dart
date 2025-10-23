@@ -7,7 +7,7 @@ class AppConstants {
   static const int primaryColorValue = 0xFFD17A45;
   
   // Image Assets
-  static const String patternImage = 'assets/images/gorilla.jpg';
+  static const String patternImage = 'assets/images/generic-inaul.jpg';
   
   // Dimensions
   static const double bannerHeight = 80.0;
@@ -20,7 +20,7 @@ class AppConstants {
   static const double backButtonVerticalPadding = 10.0;
   
   // Grid
-  static const int gridCrossAxisCount = 3;
+  static const int gridCrossAxisCount = 2;
   static const double gridMainAxisSpacing = 15.0;
   static const double gridCrossAxisSpacing = 15.0;
   

@@ -7,6 +7,19 @@ import 'package:inawl_app/widgets/pattern_banner.dart';
 class LibraryScreen extends StatelessWidget {
   const LibraryScreen({super.key});
 
+  static const List<String> patternNames = [
+    'Bailabi',
+    'Diamond Magnet',
+    'Kinayupo',
+    'Lumbayan',
+    'Pinundutan',
+    'Sahaya',
+    'Salimpukaw',
+    'Sambit',
+    'Siko Karwang',
+    'Sultan',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,17 +50,22 @@ class LibraryScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppConstants.spacingExtraLarge),
 
-                  // Grid of actual images
+                  // Grid of actual images with labels
                   Expanded(
                     child: GridView.builder(
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: AppConstants.gridCrossAxisCount,
                         mainAxisSpacing: AppConstants.gridMainAxisSpacing,
                         crossAxisSpacing: AppConstants.gridCrossAxisSpacing,
+                        childAspectRatio: 0.75, // Adjust ratio to accommodate label
                       ),
                       itemCount: ImageAssets.libraryImages.length,
                       itemBuilder: (context, index) {
-                        return _buildImageCard(ImageAssets.libraryImages[index]);
+                        return _buildImageCard(
+                          ImageAssets.libraryImages[index],
+                          patternNames[index],
+                          context,
+                        );
                       },
                     ),
                   ),
@@ -63,13 +81,30 @@ class LibraryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildImageCard(String imagePath) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppConstants.imageBorderRadius),
-      child: Image.asset(
-        imagePath,
-        fit: BoxFit.cover,
-      ),
+  Widget _buildImageCard(String imagePath, String label, BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(AppConstants.imageBorderRadius),
+            child: Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
     );
   }
 }
