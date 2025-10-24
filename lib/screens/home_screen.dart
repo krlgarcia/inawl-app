@@ -1,12 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:inawl_app/core/constants/app_constants.dart';
 import 'package:inawl_app/core/routes/app_routes.dart';
 import 'package:inawl_app/widgets/pattern_banner.dart';
 import 'package:inawl_app/widgets/custom_button.dart';
 import 'package:inawl_app/widgets/section_title.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  Future<void> _pickImageFromGallery() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        // TODO: Process the selected image for Inaul fabric identification
+        debugPrint('Image selected from gallery: ${image.path}');
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Image selected! Processing...'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error picking image from gallery: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error accessing gallery: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +85,10 @@ class HomeScreen extends StatelessWidget {
                       onPressed: () => AppRoutes.navigateToCamera(context),
                     ),
                     const SizedBox(height: AppConstants.spacingMedium),
-                    const CustomButton(text: 'Upload Inaul Image'),
+                    CustomButton(
+                      text: 'Upload Inaul Image',
+                      onPressed: _pickImageFromGallery,
+                    ),
                     const SizedBox(height: AppConstants.spacingXXXL),
 
                     // More Section

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inawl_app/core/constants/app_constants.dart';
 import 'package:inawl_app/core/constants/image_assets.dart';
+import 'package:inawl_app/core/routes/app_routes.dart';
 import 'package:inawl_app/widgets/back_button.dart' as custom;
 import 'package:inawl_app/widgets/pattern_banner.dart';
 
@@ -82,29 +83,34 @@ class LibraryScreen extends StatelessWidget {
   }
 
   Widget _buildImageCard(String imagePath, String label, BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(AppConstants.imageBorderRadius),
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        AppRoutes.navigateToPattern(context, label, imagePath);
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppConstants.imageBorderRadius),
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
+          const SizedBox(height: 8),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

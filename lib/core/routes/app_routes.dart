@@ -3,6 +3,7 @@ import 'package:inawl_app/screens/home_screen.dart';
 import 'package:inawl_app/screens/library_screen.dart';
 import 'package:inawl_app/screens/about_screen.dart';
 import 'package:inawl_app/screens/camera_screen.dart';
+import 'package:inawl_app/screens/pattern_screen.dart';
 
 class AppRoutes {
   static const String home = '/';
@@ -41,5 +42,17 @@ class AppRoutes {
   
   static void navigateToCamera(BuildContext context) {
     Navigator.pushNamed(context, camera);
+  }
+  
+  static void navigateToPattern(BuildContext context, String patternName, String imagePath) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PatternScreen(
+          patternName: patternName,
+          imagePath: imagePath,
+        ),
+      ),
+    );
   }
 }
