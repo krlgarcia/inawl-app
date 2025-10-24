@@ -46,7 +46,7 @@ class LibraryScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppConstants.spacingSmall),
                   Text(
-                    'Browse through our growing Inaul Library!',
+                    'Browse through our Inaul Library! Tap on an image to learn more about the pattern.',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: AppConstants.spacingExtraLarge),
