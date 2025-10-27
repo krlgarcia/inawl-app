@@ -73,8 +73,6 @@ flutter:
   - assets/images/sambit.jpg
   - assets/images/siko_karwang.jpg
   - assets/images/sultan.jpg
-  - assets/model/efficientnetlite0_trained_model.h5
-  - assets/model/efficientnetlite0_trained_model.keras
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
