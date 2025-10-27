@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:inawl_app/core/constants/app_constants.dart';
 import 'package:inawl_app/core/constants/image_assets.dart';
 import 'package:inawl_app/core/routes/app_routes.dart';
-import 'package:inawl_app/widgets/back_button.dart' as custom;
 import 'package:inawl_app/widgets/pattern_banner.dart';
 
 class LibraryScreen extends StatelessWidget {
@@ -46,9 +45,6 @@ class LibraryScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Back Button
-                  const custom.BackButtonWidget(),
-
                   const SizedBox(height: AppConstants.spacingMedium),
                   Text(
                     'Inaul Library',

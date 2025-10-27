@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:inawl_app/core/constants/app_constants.dart';
-import 'package:inawl_app/widgets/back_button.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -178,27 +177,6 @@ class _CameraScreenState extends State<CameraScreen> {
                   // Overlay with frame guide
                   CustomPaint(
                     painter: CameraOverlayPainter(),
-                  ),
-
-                  // Header with back button (positioned at top)
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.black.withOpacity(0.6),
-                            Colors.transparent,
-                          ],
-                        ),
-                      ),
-                      child: const BackButtonWidget(),
-                    ),
                   ),
 
                   // Instructions at the top
@@ -381,11 +359,10 @@ class CameraOverlayPainter extends CustomPainter {
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
 
-    // Calculate the frame dimensions (centered rectangle)
-    final frameWidth = size.width * 0.8;
-    final frameHeight = size.height * 0.5;
-    final left = (size.width - frameWidth) / 2;
-    final top = (size.height - frameHeight) / 2;
+    // Calculate the frame dimensions (centered square - 1:1 aspect ratio)
+    final frameSize = size.width * 0.8; // Square frame
+    final left = (size.width - frameSize) / 2;
+    final top = (size.height - frameSize) / 2;
 
     // Draw corner brackets
     final cornerLength = 40.0;
@@ -404,37 +381,37 @@ class CameraOverlayPainter extends CustomPainter {
 
     // Top-right corner
     canvas.drawLine(
-      Offset(left + frameWidth - cornerLength, top),
-      Offset(left + frameWidth, top),
+      Offset(left + frameSize - cornerLength, top),
+      Offset(left + frameSize, top),
       paint,
     );
     canvas.drawLine(
-      Offset(left + frameWidth, top),
-      Offset(left + frameWidth, top + cornerLength),
+      Offset(left + frameSize, top),
+      Offset(left + frameSize, top + cornerLength),
       paint,
     );
 
     // Bottom-left corner
     canvas.drawLine(
-      Offset(left, top + frameHeight - cornerLength),
-      Offset(left, top + frameHeight),
+      Offset(left, top + frameSize - cornerLength),
+      Offset(left, top + frameSize),
       paint,
     );
     canvas.drawLine(
-      Offset(left, top + frameHeight),
-      Offset(left + cornerLength, top + frameHeight),
+      Offset(left, top + frameSize),
+      Offset(left + cornerLength, top + frameSize),
       paint,
     );
 
     // Bottom-right corner
     canvas.drawLine(
-      Offset(left + frameWidth - cornerLength, top + frameHeight),
-      Offset(left + frameWidth, top + frameHeight),
+      Offset(left + frameSize - cornerLength, top + frameSize),
+      Offset(left + frameSize, top + frameSize),
       paint,
     );
     canvas.drawLine(
-      Offset(left + frameWidth, top + frameHeight - cornerLength),
-      Offset(left + frameWidth, top + frameHeight),
+      Offset(left + frameSize, top + frameSize - cornerLength),
+      Offset(left + frameSize, top + frameSize),
       paint,
     );
 
@@ -451,19 +428,19 @@ class CameraOverlayPainter extends CustomPainter {
 
     // Bottom overlay
     canvas.drawRect(
-      Rect.fromLTWH(0, top + frameHeight, size.width, size.height - (top + frameHeight)),
+      Rect.fromLTWH(0, top + frameSize, size.width, size.height - (top + frameSize)),
       overlayPaint,
     );
 
     // Left overlay
     canvas.drawRect(
-      Rect.fromLTWH(0, top, left, frameHeight),
+      Rect.fromLTWH(0, top, left, frameSize),
       overlayPaint,
     );
 
     // Right overlay
     canvas.drawRect(
-      Rect.fromLTWH(left + frameWidth, top, size.width - (left + frameWidth), frameHeight),
+      Rect.fromLTWH(left + frameSize, top, size.width - (left + frameSize), frameSize),
       overlayPaint,
     );
   }

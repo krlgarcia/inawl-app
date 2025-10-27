@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:inawl_app/core/constants/app_constants.dart';
-import 'package:inawl_app/widgets/back_button.dart' as custom;
 import 'package:inawl_app/widgets/pattern_banner.dart';
 
 class PatternScreen extends StatelessWidget {
@@ -28,9 +27,6 @@ class PatternScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Back button
-                  const custom.BackButtonWidget(),
-
                   const SizedBox(height: AppConstants.spacingMedium),
                   Text(
                     patternName,
