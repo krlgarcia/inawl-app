@@ -10,15 +10,25 @@ class LibraryScreen extends StatelessWidget {
 
   static const List<String> patternNames = [
     'Bailabi',
+    'Binaludan Diamond',
     'Diamond Magnet',
     'Kinayupo',
+    'Kinulipis',
     'Lumbayan',
+    'Pakiring',
+    'Panigabi',
+    'Pine Tree',
     'Pinundutan',
+    'Pinya',
     'Sahaya',
     'Salimpukaw',
     'Sambit',
+    'Sara Design',
     'Siko Karwang',
+    'Siku Andun',
     'Sultan',
+    'Sunflower',
+    'Tipas',
   ];
 
   @override
