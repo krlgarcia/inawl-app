@@ -44,13 +44,21 @@ class AppRoutes {
     Navigator.pushNamed(context, camera);
   }
   
-  static void navigateToPattern(BuildContext context, String patternName, String imagePath) {
+  static void navigateToPattern(
+    BuildContext context,
+    String patternName,
+    String imagePath, {
+    String? capturedImagePath,
+    String? confidence,
+  }) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => PatternScreen(
           patternName: patternName,
           imagePath: imagePath,
+          capturedImagePath: capturedImagePath,
+          confidence: confidence,
         ),
       ),
     );

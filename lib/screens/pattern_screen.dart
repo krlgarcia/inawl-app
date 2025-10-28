@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:inawl_app/core/constants/app_constants.dart';
 import 'package:inawl_app/widgets/pattern_banner.dart';
@@ -5,11 +6,15 @@ import 'package:inawl_app/widgets/pattern_banner.dart';
 class PatternScreen extends StatelessWidget {
   final String patternName;
   final String imagePath;
+  final String? capturedImagePath;
+  final String? confidence;
 
   const PatternScreen({
     super.key,
     required this.patternName,
     required this.imagePath,
+    this.capturedImagePath,
+    this.confidence,
   });
 
   @override
@@ -32,18 +37,97 @@ class PatternScreen extends StatelessWidget {
                     patternName,
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
+                  
+                  // Show confidence if available
+                  if (confidence != null) ...[
+                    const SizedBox(height: AppConstants.spacingSmall),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.green, width: 1.5),
+                      ),
+                      child: Text(
+                        'Confidence: $confidence%',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.green.shade700,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                  
                   const SizedBox(height: AppConstants.spacingExtraLarge),
 
-                  // Pattern image
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(AppConstants.imageBorderRadius),
-                    child: Image.asset(
-                      imagePath,
-                      height: 200,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                  // Show both images side by side if captured image exists
+                  if (capturedImagePath != null) ...[
+                    Row(
+                      children: [
+                        // Captured image
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Your Photo',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(AppConstants.imageBorderRadius),
+                                child: Image.file(
+                                  File(capturedImagePath!),
+                                  height: 150,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Pattern library image
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Library Pattern',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(AppConstants.imageBorderRadius),
+                                child: Image.asset(
+                                  imagePath,
+                                  height: 150,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
+                  ] else ...[
+                    // Pattern image only (when browsing library)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(AppConstants.imageBorderRadius),
+                      child: Image.asset(
+                        imagePath,
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                  
                   const SizedBox(height: AppConstants.spacingExtraLarge),
 
                   // Scrollable text content

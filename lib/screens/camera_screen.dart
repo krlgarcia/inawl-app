@@ -1,7 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 import 'package:inawl_app/core/constants/app_constants.dart';
+import 'package:inawl_app/core/constants/image_assets.dart';
+import 'package:inawl_app/core/routes/app_routes.dart';
+import 'package:inawl_app/services/model_service.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -86,17 +92,41 @@ class _CameraScreenState extends State<CameraScreen> {
     });
 
     try {
+      // Capture the full image
       final XFile image = await _controller!.takePicture();
-      // TODO: Process the image for Inaul fabric identification
       debugPrint('Picture taken: ${image.path}');
       
-      // For now, just show a message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Image captured! Processing...'),
-            duration: Duration(seconds: 2),
+            content: Text('Processing image...'),
+            duration: Duration(seconds: 1),
           ),
+        );
+      }
+
+      // Crop and resize the image to 384x384 from the frame area
+      final croppedImagePath = await _cropImageToFrame(image.path);
+      
+      // Run ML inference
+      final result = await ModelService.classifyImage(croppedImagePath);
+      final predictedClass = result['predictedClass'] as String;
+      final confidence = result['percentage'] as String;
+      
+      // Find the matching library image
+      final patternIndex = ModelService.classNames.indexOf(predictedClass);
+      final imagePath = patternIndex >= 0 && patternIndex < ImageAssets.libraryImages.length
+          ? ImageAssets.libraryImages[patternIndex]
+          : ImageAssets.libraryImages[0];
+      
+      if (mounted) {
+        // Navigate to pattern screen with captured image and confidence
+        AppRoutes.navigateToPattern(
+          context,
+          predictedClass,
+          imagePath,
+          capturedImagePath: croppedImagePath,
+          confidence: confidence,
         );
       }
     } catch (e) {
@@ -104,8 +134,9 @@ class _CameraScreenState extends State<CameraScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text('Error: ${e.toString()}'),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -116,6 +147,64 @@ class _CameraScreenState extends State<CameraScreen> {
         });
       }
     }
+  }
+
+  /// Crop image to the frame area and resize to 384x384
+  Future<String> _cropImageToFrame(String imagePath) async {
+    // Load the captured image
+    final bytes = await File(imagePath).readAsBytes();
+    img.Image? originalImage = img.decodeImage(bytes);
+    
+    if (originalImage == null) {
+      throw Exception('Failed to decode image');
+    }
+
+    // Get the screen size to calculate frame position
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    
+    // Calculate frame dimensions (matching CameraOverlayPainter)
+    final frameSize = screenWidth * 0.8;
+    final frameLeft = (screenWidth - frameSize) / 2;
+    final frameTop = (screenHeight - frameSize) / 2;
+    
+    // Calculate the crop area in the original image coordinates
+    final imageWidth = originalImage.width;
+    final imageHeight = originalImage.height;
+    
+    // Scale factors
+    final scaleX = imageWidth / screenWidth;
+    final scaleY = imageHeight / screenHeight;
+    
+    // Crop coordinates in original image
+    final cropLeft = (frameLeft * scaleX).toInt();
+    final cropTop = (frameTop * scaleY).toInt();
+    final cropSize = (frameSize * scaleX).toInt();
+    
+    // Crop the image to the frame area
+    img.Image croppedImage = img.copyCrop(
+      originalImage,
+      x: cropLeft,
+      y: cropTop,
+      width: cropSize,
+      height: cropSize,
+    );
+    
+    // Resize to 384x384
+    img.Image resizedImage = img.copyResize(
+      croppedImage,
+      width: 384,
+      height: 384,
+    );
+    
+    // Save the cropped and resized image
+    final directory = await getTemporaryDirectory();
+    final croppedPath = '${directory.path}/cropped_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final croppedFile = File(croppedPath);
+    await croppedFile.writeAsBytes(img.encodeJpg(resizedImage));
+    
+    debugPrint('Cropped image saved to: $croppedPath');
+    return croppedPath;
   }
 
   Future<void> _pickImageFromGallery() async {
