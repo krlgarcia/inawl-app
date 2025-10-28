@@ -25,15 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
       if (image != null) {
         // TODO: Process the selected image for Inaul fabric identification
         debugPrint('Image selected from gallery: ${image.path}');
-        
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Image selected! Processing...'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
       }
     } catch (e) {
       debugPrint('Error picking image from gallery: $e');

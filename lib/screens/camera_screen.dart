@@ -95,15 +95,6 @@ class _CameraScreenState extends State<CameraScreen> {
       // Capture the full image
       final XFile image = await _controller!.takePicture();
       debugPrint('Picture taken: ${image.path}');
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Processing image...'),
-            duration: Duration(seconds: 1),
-          ),
-        );
-      }
 
       // Crop and resize the image to 384x384 from the frame area
       final croppedImagePath = await _cropImageToFrame(image.path);
@@ -218,15 +209,6 @@ class _CameraScreenState extends State<CameraScreen> {
       if (image != null) {
         // TODO: Process the selected image for Inaul fabric identification
         debugPrint('Image selected from gallery: ${image.path}');
-        
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Image selected! Processing...'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
       }
     } catch (e) {
       debugPrint('Error picking image from gallery: $e');
