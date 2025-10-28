@@ -5,6 +5,7 @@ import 'package:inawl_app/core/routes/app_routes.dart';
 import 'package:inawl_app/widgets/pattern_banner.dart';
 import 'package:inawl_app/widgets/custom_button.dart';
 import 'package:inawl_app/widgets/section_title.dart';
+import 'package:inawl_app/screens/image_crop_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,8 +24,16 @@ class _HomeScreenState extends State<HomeScreen> {
       );
 
       if (image != null) {
-        // TODO: Process the selected image for Inaul fabric identification
         debugPrint('Image selected from gallery: ${image.path}');
+        
+        if (mounted) {
+          // Navigate to crop screen
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ImageCropScreen(imagePath: image.path),
+            ),
+          );
+        }
       }
     } catch (e) {
       debugPrint('Error picking image from gallery: $e');

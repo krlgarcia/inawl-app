@@ -8,6 +8,7 @@ import 'package:inawl_app/core/constants/app_constants.dart';
 import 'package:inawl_app/core/constants/image_assets.dart';
 import 'package:inawl_app/core/routes/app_routes.dart';
 import 'package:inawl_app/services/model_service.dart';
+import 'package:inawl_app/screens/image_crop_screen.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -207,8 +208,16 @@ class _CameraScreenState extends State<CameraScreen> {
       );
 
       if (image != null) {
-        // TODO: Process the selected image for Inaul fabric identification
         debugPrint('Image selected from gallery: ${image.path}');
+        
+        if (mounted) {
+          // Navigate to crop screen
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ImageCropScreen(imagePath: image.path),
+            ),
+          );
+        }
       }
     } catch (e) {
       debugPrint('Error picking image from gallery: $e');
