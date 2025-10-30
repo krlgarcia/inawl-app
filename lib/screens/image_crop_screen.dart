@@ -27,6 +27,8 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
   double _frameSize = 0;
   Size _imageDisplaySize = Size.zero;
   Offset _imageOffset = Offset.zero;
+  double _minFrameSize = 100.0;
+  double _maxFrameSize = 0;
 
   @override
   void initState() {
@@ -78,6 +80,12 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
       (screenSize.height - _imageDisplaySize.height) / 2,
     );
 
+    // Set min and max frame size
+    _minFrameSize = 100.0;
+    _maxFrameSize = _imageDisplaySize.width < _imageDisplaySize.height
+        ? _imageDisplaySize.width
+        : _imageDisplaySize.height;
+
     // Set initial frame size to 80% of the smaller dimension
     final maxFrameSize = _imageDisplaySize.width < _imageDisplaySize.height
         ? _imageDisplaySize.width * 0.8
@@ -92,6 +100,58 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
     );
 
     setState(() {});
+  }
+
+  void _handleCornerResize(DragUpdateDetails details, String corner) {
+    setState(() {
+      double delta = 0;
+      
+      // Calculate delta based on which corner is being dragged
+      switch (corner) {
+        case 'topLeft':
+          delta = -(details.delta.dx + details.delta.dy) / 2;
+          break;
+        case 'topRight':
+          delta = (details.delta.dx - details.delta.dy) / 2;
+          break;
+        case 'bottomLeft':
+          delta = (-details.delta.dx + details.delta.dy) / 2;
+          break;
+        case 'bottomRight':
+          delta = (details.delta.dx + details.delta.dy) / 2;
+          break;
+      }
+      
+      final oldSize = _frameSize;
+      final newSize = (oldSize + delta).clamp(_minFrameSize, _maxFrameSize);
+      final sizeDiff = newSize - oldSize;
+      
+      // Adjust offset based on corner being dragged
+      var newOffset = _frameOffset;
+      
+      if (corner.contains('top')) {
+        newOffset = Offset(newOffset.dx, newOffset.dy - sizeDiff / 2);
+      } else {
+        newOffset = Offset(newOffset.dx, newOffset.dy + sizeDiff / 2);
+      }
+      
+      if (corner.contains('Left')) {
+        newOffset = Offset(newOffset.dx - sizeDiff / 2, newOffset.dy);
+      } else {
+        newOffset = Offset(newOffset.dx + sizeDiff / 2, newOffset.dy);
+      }
+      
+      _frameSize = newSize;
+      
+      // Constrain within image bounds
+      final maxX = _imageOffset.dx + _imageDisplaySize.width - _frameSize;
+      final maxY = _imageOffset.dy + _imageDisplaySize.height - _frameSize;
+      
+      _frameOffset = Offset(
+        newOffset.dx.clamp(_imageOffset.dx, maxX),
+        newOffset.dy.clamp(_imageOffset.dy, maxY),
+      );
+    });
   }
 
   Future<void> _cropAndProcess() async {
@@ -218,24 +278,57 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
                     ),
                   ),
 
-                  // Draggable frame
+                  // Draggable frame with pinch-to-zoom
                   Positioned(
                     left: _frameOffset.dx,
                     top: _frameOffset.dy,
                     child: GestureDetector(
-                      onPanUpdate: (details) {
+                      onScaleStart: (details) {
+                        // Initialize scale gesture
+                      },
+                      onScaleUpdate: (details) {
                         setState(() {
-                          final newX = _frameOffset.dx + details.delta.dx;
-                          final newY = _frameOffset.dy + details.delta.dy;
-                          
-                          // Constrain within image bounds
-                          final maxX = _imageOffset.dx + _imageDisplaySize.width - _frameSize;
-                          final maxY = _imageOffset.dy + _imageDisplaySize.height - _frameSize;
-                          
-                          _frameOffset = Offset(
-                            newX.clamp(_imageOffset.dx, maxX),
-                            newY.clamp(_imageOffset.dy, maxY),
-                          );
+                          if (details.scale != 1.0) {
+                            // Handle resize (pinch)
+                            final oldSize = _frameSize;
+                            final newSize = (oldSize * details.scale).clamp(_minFrameSize, _maxFrameSize);
+                            
+                            // Calculate new offset to keep the frame centered at focal point
+                            final frameCenter = Offset(
+                              _frameOffset.dx + oldSize / 2,
+                              _frameOffset.dy + oldSize / 2,
+                            );
+                            
+                            _frameSize = newSize;
+                            
+                            // Adjust position to keep centered
+                            var newOffset = Offset(
+                              frameCenter.dx - newSize / 2,
+                              frameCenter.dy - newSize / 2,
+                            );
+                            
+                            // Constrain within image bounds
+                            final maxX = _imageOffset.dx + _imageDisplaySize.width - _frameSize;
+                            final maxY = _imageOffset.dy + _imageDisplaySize.height - _frameSize;
+                            
+                            _frameOffset = Offset(
+                              newOffset.dx.clamp(_imageOffset.dx, maxX),
+                              newOffset.dy.clamp(_imageOffset.dy, maxY),
+                            );
+                          } else {
+                            // Handle drag (single finger)
+                            final newX = _frameOffset.dx + details.focalPointDelta.dx;
+                            final newY = _frameOffset.dy + details.focalPointDelta.dy;
+                            
+                            // Constrain within image bounds
+                            final maxX = _imageOffset.dx + _imageDisplaySize.width - _frameSize;
+                            final maxY = _imageOffset.dy + _imageDisplaySize.height - _frameSize;
+                            
+                            _frameOffset = Offset(
+                              newX.clamp(_imageOffset.dx, maxX),
+                              newY.clamp(_imageOffset.dy, maxY),
+                            );
+                          }
                         });
                       },
                       child: Container(
@@ -245,6 +338,12 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
                       ),
                     ),
                   ),
+
+                  // Corner resize handles
+                  _buildResizeHandle('topLeft'),
+                  _buildResizeHandle('topRight'),
+                  _buildResizeHandle('bottomLeft'),
+                  _buildResizeHandle('bottomRight'),
 
                   // Instructions at the top
                   Positioned(
@@ -271,7 +370,7 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            'Drag to reposition',
+                            'Drag to reposition • Pinch or drag corners to resize',
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               color: Colors.white,
                               shadows: [
@@ -357,6 +456,58 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
                   ),
                 ],
               ),
+      ),
+    );
+  }
+
+  Widget _buildResizeHandle(String corner) {
+    double left = 0, top = 0;
+    
+    switch (corner) {
+      case 'topLeft':
+        left = _frameOffset.dx - 15;
+        top = _frameOffset.dy - 15;
+        break;
+      case 'topRight':
+        left = _frameOffset.dx + _frameSize - 15;
+        top = _frameOffset.dy - 15;
+        break;
+      case 'bottomLeft':
+        left = _frameOffset.dx - 15;
+        top = _frameOffset.dy + _frameSize - 15;
+        break;
+      case 'bottomRight':
+        left = _frameOffset.dx + _frameSize - 15;
+        top = _frameOffset.dy + _frameSize - 15;
+        break;
+    }
+    
+    return Positioned(
+      left: left,
+      top: top,
+      child: GestureDetector(
+        onPanUpdate: (details) => _handleCornerResize(details, corner),
+        child: Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.blue, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.drag_handle,
+            size: 16,
+            color: Colors.blue,
+          ),
+        ),
       ),
     );
   }
