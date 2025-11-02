@@ -89,33 +89,44 @@ class LibraryScreen extends StatelessWidget {
   }
 
   Widget _buildImageCard(String imagePath, String label, BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        AppRoutes.navigateToPattern(context, label, imagePath);
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(AppConstants.imageBorderRadius),
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
+    return Card(
+      elevation: 4,
+      shadowColor: Colors.black.withOpacity(0.25),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppConstants.imageBorderRadius),
+      ),
+      child: InkWell(
+        onTap: () {
+          AppRoutes.navigateToPattern(context, label, imagePath);
+        },
+        borderRadius: BorderRadius.circular(AppConstants.imageBorderRadius),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppConstants.imageBorderRadius),
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+        ),
       ),
     );
   }

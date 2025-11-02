@@ -265,9 +265,20 @@ class _CameraScreenState extends State<CameraScreen> {
                     left: 0,
                     right: 0,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
+                      margin: const EdgeInsets.symmetric(
                         horizontal: AppConstants.defaultPadding,
-                        vertical: 12,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.3),
+                          width: 1,
+                        ),
                       ),
                       child: Column(
                         children: [
@@ -275,9 +286,10 @@ class _CameraScreenState extends State<CameraScreen> {
                             'Position the Inaul fabric',
                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               color: Colors.white,
+                              fontWeight: FontWeight.bold,
                               shadows: [
                                 const Shadow(
-                                  blurRadius: 10.0,
+                                  blurRadius: 8.0,
                                   color: Colors.black,
                                   offset: Offset(0, 2),
                                 ),
@@ -289,10 +301,10 @@ class _CameraScreenState extends State<CameraScreen> {
                           Text(
                             'within the frame',
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.white,
+                              color: Colors.white.withOpacity(0.9),
                               shadows: [
                                 const Shadow(
-                                  blurRadius: 10.0,
+                                  blurRadius: 8.0,
                                   color: Colors.black,
                                   offset: Offset(0, 2),
                                 ),
@@ -434,19 +446,71 @@ class _CameraScreenState extends State<CameraScreen> {
 class CameraOverlayPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withOpacity(0.8)
-      ..strokeWidth = 3
-      ..style = PaintingStyle.stroke;
-
     // Calculate the frame dimensions (centered square - 1:1 aspect ratio)
     final frameSize = size.width * 0.8; // Square frame
     final left = (size.width - frameSize) / 2;
     final top = (size.height - frameSize) / 2;
+    final cornerLength = 50.0; // Increased from 40.0 for better visibility
 
-    // Draw corner brackets
-    final cornerLength = 40.0;
+    // Draw glow effect for corner brackets (outer glow)
+    final glowPaint = Paint()
+      ..color = Colors.white.withOpacity(0.3)
+      ..strokeWidth = 8
+      ..style = PaintingStyle.stroke
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
 
+    // Draw corner brackets with glow
+    _drawCornerBrackets(canvas, left, top, frameSize, cornerLength, glowPaint);
+
+    // Draw main corner brackets (thicker and more opaque)
+    final mainPaint = Paint()
+      ..color = Colors.white.withOpacity(0.95)
+      ..strokeWidth = 5 // Increased from 3 for better visibility
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    _drawCornerBrackets(canvas, left, top, frameSize, cornerLength, mainPaint);
+
+    // Draw inner highlight for 3D effect
+    final highlightPaint = Paint()
+      ..color = Colors.white.withOpacity(0.4)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    _drawCornerBrackets(canvas, left + 2, top + 2, frameSize - 4, cornerLength - 4, highlightPaint);
+
+    // Draw semi-transparent overlay outside the frame
+    final overlayPaint = Paint()
+      ..color = Colors.black.withOpacity(0.6) // Increased from 0.5 for better contrast
+      ..style = PaintingStyle.fill;
+
+    // Top overlay
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.width, top),
+      overlayPaint,
+    );
+
+    // Bottom overlay
+    canvas.drawRect(
+      Rect.fromLTWH(0, top + frameSize, size.width, size.height - (top + frameSize)),
+      overlayPaint,
+    );
+
+    // Left overlay
+    canvas.drawRect(
+      Rect.fromLTWH(0, top, left, frameSize),
+      overlayPaint,
+    );
+
+    // Right overlay
+    canvas.drawRect(
+      Rect.fromLTWH(left + frameSize, top, size.width - (left + frameSize), frameSize),
+      overlayPaint,
+    );
+  }
+
+  void _drawCornerBrackets(Canvas canvas, double left, double top, double frameSize, double cornerLength, Paint paint) {
     // Top-left corner
     canvas.drawLine(
       Offset(left, top + cornerLength),
@@ -493,35 +557,6 @@ class CameraOverlayPainter extends CustomPainter {
       Offset(left + frameSize, top + frameSize - cornerLength),
       Offset(left + frameSize, top + frameSize),
       paint,
-    );
-
-    // Draw semi-transparent overlay outside the frame
-    final overlayPaint = Paint()
-      ..color = Colors.black.withOpacity(0.5)
-      ..style = PaintingStyle.fill;
-
-    // Top overlay
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, size.width, top),
-      overlayPaint,
-    );
-
-    // Bottom overlay
-    canvas.drawRect(
-      Rect.fromLTWH(0, top + frameSize, size.width, size.height - (top + frameSize)),
-      overlayPaint,
-    );
-
-    // Left overlay
-    canvas.drawRect(
-      Rect.fromLTWH(0, top, left, frameSize),
-      overlayPaint,
-    );
-
-    // Right overlay
-    canvas.drawRect(
-      Rect.fromLTWH(left + frameSize, top, size.width - (left + frameSize), frameSize),
-      overlayPaint,
     );
   }
 

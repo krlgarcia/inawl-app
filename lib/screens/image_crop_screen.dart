@@ -351,37 +351,48 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
                     left: 0,
                     right: 0,
                     child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
                       child: Column(
                         children: [
                           Text(
-                            'Adjust the frame',
+                            'Adjust Crop Area',
                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               color: Colors.white,
-                              shadows: [
-                                const Shadow(
-                                  blurRadius: 10.0,
-                                  color: Colors.black,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
+                              fontWeight: FontWeight.bold,
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 5),
-                          Text(
-                            'Drag to reposition • Pinch or drag corners to resize',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.white,
-                              shadows: [
-                                const Shadow(
-                                  blurRadius: 10.0,
-                                  color: Colors.black,
-                                  offset: Offset(0, 2),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.pan_tool, color: Colors.white70, size: 16),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Drag to move',
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: Colors.white70,
                                 ),
-                              ],
-                            ),
-                            textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(width: 16),
+                              const Icon(Icons.zoom_out_map, color: Colors.white70, size: 16),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Pinch/corners to resize',
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -409,34 +420,28 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           // Cancel button
-                          ElevatedButton(
+                          ElevatedButton.icon(
                             onPressed: _isProcessing ? null : () => Navigator.of(context).pop(),
+                            icon: const Icon(Icons.close, size: 20),
+                            label: const Text(
+                              'Cancel',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                              backgroundColor: Colors.white.withOpacity(0.9),
+                              foregroundColor: Colors.red.shade700,
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
-                            ),
-                            child: const Text(
-                              'Cancel',
-                              style: TextStyle(fontSize: 16),
+                              elevation: 4,
                             ),
                           ),
 
                           // Crop and identify button
-                          ElevatedButton(
+                          ElevatedButton.icon(
                             onPressed: _isProcessing ? null : _cropAndProcess,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: _isProcessing
+                            icon: _isProcessing 
                                 ? const SizedBox(
                                     width: 20,
                                     height: 20,
@@ -445,10 +450,20 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
                                       strokeWidth: 2,
                                     ),
                                   )
-                                : const Text(
-                                    'Identify',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
+                                : const Icon(Icons.check_circle, size: 20),
+                            label: Text(
+                              _isProcessing ? 'Processing...' : 'Identify Pattern',
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green.shade600,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              elevation: 4,
+                            ),
                           ),
                         ],
                       ),
@@ -465,20 +480,20 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
     
     switch (corner) {
       case 'topLeft':
-        left = _frameOffset.dx - 15;
-        top = _frameOffset.dy - 15;
+        left = _frameOffset.dx - 20;
+        top = _frameOffset.dy - 20;
         break;
       case 'topRight':
-        left = _frameOffset.dx + _frameSize - 15;
-        top = _frameOffset.dy - 15;
+        left = _frameOffset.dx + _frameSize - 20;
+        top = _frameOffset.dy - 20;
         break;
       case 'bottomLeft':
-        left = _frameOffset.dx - 15;
-        top = _frameOffset.dy + _frameSize - 15;
+        left = _frameOffset.dx - 20;
+        top = _frameOffset.dy + _frameSize - 20;
         break;
       case 'bottomRight':
-        left = _frameOffset.dx + _frameSize - 15;
-        top = _frameOffset.dy + _frameSize - 15;
+        left = _frameOffset.dx + _frameSize - 20;
+        top = _frameOffset.dy + _frameSize - 20;
         break;
     }
     
@@ -488,24 +503,29 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
       child: GestureDetector(
         onPanUpdate: (details) => _handleCornerResize(details, corner),
         child: Container(
-          width: 30,
-          height: 30,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
             color: Colors.white,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.blue, width: 2),
+            border: Border.all(color: const Color(0xFFD17A45), width: 3),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 4,
+                color: Colors.black.withOpacity(0.4),
+                blurRadius: 8,
                 offset: const Offset(0, 2),
+              ),
+              BoxShadow(
+                color: const Color(0xFFD17A45).withOpacity(0.3),
+                blurRadius: 12,
+                spreadRadius: 2,
               ),
             ],
           ),
           child: const Icon(
-            Icons.drag_handle,
-            size: 16,
-            color: Colors.blue,
+            Icons.open_in_full,
+            size: 18,
+            color: Color(0xFFD17A45),
           ),
         ),
       ),
@@ -531,67 +551,13 @@ class CropOverlayPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withOpacity(0.8)
-      ..strokeWidth = 3
-      ..style = PaintingStyle.stroke;
-
     final left = frameOffset.dx;
     final top = frameOffset.dy;
-    final cornerLength = 40.0;
-
-    // Draw corner brackets
-    // Top-left corner
-    canvas.drawLine(
-      Offset(left, top + cornerLength),
-      Offset(left, top),
-      paint,
-    );
-    canvas.drawLine(
-      Offset(left, top),
-      Offset(left + cornerLength, top),
-      paint,
-    );
-
-    // Top-right corner
-    canvas.drawLine(
-      Offset(left + frameSize - cornerLength, top),
-      Offset(left + frameSize, top),
-      paint,
-    );
-    canvas.drawLine(
-      Offset(left + frameSize, top),
-      Offset(left + frameSize, top + cornerLength),
-      paint,
-    );
-
-    // Bottom-left corner
-    canvas.drawLine(
-      Offset(left, top + frameSize - cornerLength),
-      Offset(left, top + frameSize),
-      paint,
-    );
-    canvas.drawLine(
-      Offset(left, top + frameSize),
-      Offset(left + cornerLength, top + frameSize),
-      paint,
-    );
-
-    // Bottom-right corner
-    canvas.drawLine(
-      Offset(left + frameSize - cornerLength, top + frameSize),
-      Offset(left + frameSize, top + frameSize),
-      paint,
-    );
-    canvas.drawLine(
-      Offset(left + frameSize, top + frameSize - cornerLength),
-      Offset(left + frameSize, top + frameSize),
-      paint,
-    );
+    final cornerLength = 50.0;
 
     // Draw semi-transparent overlay outside the frame
     final overlayPaint = Paint()
-      ..color = Colors.black.withOpacity(0.5)
+      ..color = Colors.black.withOpacity(0.6)
       ..style = PaintingStyle.fill;
 
     // Top overlay
@@ -617,6 +583,79 @@ class CropOverlayPainter extends CustomPainter {
       Rect.fromLTWH(left + frameSize, top, size.width - (left + frameSize), frameSize),
       overlayPaint,
     );
+
+    // Draw rule of thirds grid lines
+    final gridPaint = Paint()
+      ..color = Colors.white.withOpacity(0.3)
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+
+    // Vertical lines
+    final third = frameSize / 3;
+    canvas.drawLine(
+      Offset(left + third, top),
+      Offset(left + third, top + frameSize),
+      gridPaint,
+    );
+    canvas.drawLine(
+      Offset(left + third * 2, top),
+      Offset(left + third * 2, top + frameSize),
+      gridPaint,
+    );
+
+    // Horizontal lines
+    canvas.drawLine(
+      Offset(left, top + third),
+      Offset(left + frameSize, top + third),
+      gridPaint,
+    );
+    canvas.drawLine(
+      Offset(left, top + third * 2),
+      Offset(left + frameSize, top + third * 2),
+      gridPaint,
+    );
+
+    // Draw corner brackets with glow effect
+    final glowPaint = Paint()
+      ..color = const Color(0xFFD17A45).withOpacity(0.5)
+      ..strokeWidth = 8
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+
+    final mainPaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    final highlightPaint = Paint()
+      ..color = const Color(0xFFD17A45)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    _drawCornerBrackets(canvas, left, top, cornerLength, glowPaint);
+    _drawCornerBrackets(canvas, left, top, cornerLength, mainPaint);
+    _drawCornerBrackets(canvas, left, top, cornerLength, highlightPaint);
+  }
+
+  void _drawCornerBrackets(Canvas canvas, double left, double top, double cornerLength, Paint paint) {
+    // Top-left corner
+    canvas.drawLine(Offset(left, top + cornerLength), Offset(left, top), paint);
+    canvas.drawLine(Offset(left, top), Offset(left + cornerLength, top), paint);
+
+    // Top-right corner
+    canvas.drawLine(Offset(left + frameSize - cornerLength, top), Offset(left + frameSize, top), paint);
+    canvas.drawLine(Offset(left + frameSize, top), Offset(left + frameSize, top + cornerLength), paint);
+
+    // Bottom-left corner
+    canvas.drawLine(Offset(left, top + frameSize - cornerLength), Offset(left, top + frameSize), paint);
+    canvas.drawLine(Offset(left, top + frameSize), Offset(left + cornerLength, top + frameSize), paint);
+
+    // Bottom-right corner
+    canvas.drawLine(Offset(left + frameSize - cornerLength, top + frameSize), Offset(left + frameSize, top + frameSize), paint);
+    canvas.drawLine(Offset(left + frameSize, top + frameSize - cornerLength), Offset(left + frameSize, top + frameSize), paint);
   }
 
   @override

@@ -43,7 +43,7 @@ class ModelService {
 
     // Resize to 384x384 (model input size)
     const inputSize = 384;
-    print('Resizing image to ${inputSize}x${inputSize}');
+    print('Resizing image to ${inputSize}x$inputSize');
     
     img.Image resizedImage = img.copyResize(
       image,

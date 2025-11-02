@@ -81,12 +81,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     // Buttons
                     CustomButton(
-                      text: 'Scan Inaul Fabric',
+                      text: 'Scan',
+                      icon: Icons.camera_alt,
                       onPressed: () => AppRoutes.navigateToCamera(context),
                     ),
                     const SizedBox(height: AppConstants.spacingMedium),
                     CustomButton(
-                      text: 'Upload Inaul Image',
+                      text: 'Upload',
+                      icon: Icons.photo_library,
                       onPressed: _pickImageFromGallery,
                     ),
                     const SizedBox(height: AppConstants.spacingXXXL),
@@ -100,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     CustomButton(
                       text: 'Browse Library',
+                      icon: Icons.grid_view,
                       onPressed: () => AppRoutes.navigateToLibrary(context),
                     ),
 
@@ -107,6 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     CustomButton(
                       text: 'About Inaul',
+                      icon: Icons.info_outline,
                       onPressed: () => AppRoutes.navigateToAbout(context),
                     ),
                   ],

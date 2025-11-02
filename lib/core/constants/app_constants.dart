@@ -12,7 +12,7 @@ class AppConstants {
   // Dimensions
   static const double bannerHeight = 80.0;
   static const double defaultPadding = 20.0;
-  static const double buttonBorderRadius = 12.0;
+  static const double buttonBorderRadius = 30.0;
   static const double backButtonBorderRadius = 20.0;
   static const double imageBorderRadius = 12.0;
   static const double buttonVerticalPadding = 14.0;

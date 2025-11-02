@@ -19,6 +19,9 @@ class PatternScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Parse confidence value for color coding
+    final confidenceValue = confidence != null ? double.tryParse(confidence!) : null;
+    
     return Scaffold(
       body: Column(
         children: [
@@ -39,23 +42,9 @@ class PatternScreen extends StatelessWidget {
                   ),
                   
                   // Show confidence if available
-                  if (confidence != null) ...[
-                    const SizedBox(height: AppConstants.spacingSmall),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.green, width: 1.5),
-                      ),
-                      child: Text(
-                        'Confidence: $confidence%',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.green.shade700,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                  if (confidence != null && confidenceValue != null) ...[
+                    const SizedBox(height: AppConstants.spacingMedium),
+                    _buildConfidenceDisplay(context, confidenceValue),
                   ],
                   
                   const SizedBox(height: AppConstants.spacingExtraLarge),
@@ -159,6 +148,137 @@ class PatternScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildConfidenceDisplay(BuildContext context, double confidenceValue) {
+    final confidenceLevel = _getConfidenceLevel(confidenceValue);
+    final color = _getConfidenceColor(confidenceValue);
+    final icon = _getConfidenceIcon(confidenceValue);
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            color.withOpacity(0.1),
+            color.withOpacity(0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Circular confidence indicator
+          Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: color.withOpacity(0.2),
+              border: Border.all(color: color, width: 3),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '${confidenceValue.toStringAsFixed(1)}%',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          
+          // Confidence details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(icon, color: color, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      confidenceLevel,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _getConfidenceMessage(confidenceValue),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Progress bar
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: confidenceValue / 100,
+                    backgroundColor: Colors.grey.shade200,
+                    valueColor: AlwaysStoppedAnimation<Color>(color),
+                    minHeight: 6,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getConfidenceLevel(double confidence) {
+    if (confidence >= 90) return 'Very High Confidence';
+    if (confidence >= 80) return 'High Confidence';
+    if (confidence >= 70) return 'Moderate Confidence';
+    if (confidence >= 60) return 'Low Confidence';
+    return 'Uncertain Result';
+  }
+
+  Color _getConfidenceColor(double confidence) {
+    if (confidence >= 90) return Colors.green.shade700;      // Very High: Dark Green
+    if (confidence >= 80) return Colors.lightGreen.shade700; // High: Light Green
+    if (confidence >= 70) return Colors.amber.shade700;      // Moderate: Amber
+    if (confidence >= 60) return Colors.orange.shade700;     // Low: Orange
+    return Colors.red.shade700;                              // Uncertain: Red
+  }
+
+  IconData _getConfidenceIcon(double confidence) {
+    if (confidence >= 90) return Icons.check_circle;         // Very High
+    if (confidence >= 80) return Icons.check_circle_outline; // High
+    if (confidence >= 70) return Icons.info;                 // Moderate
+    if (confidence >= 60) return Icons.info_outline;         // Low
+    return Icons.warning;                                    // Uncertain
+  }
+
+  String _getConfidenceMessage(double confidence) {
+    if (confidence >= 90) return 'Strong pattern match!';
+    if (confidence >= 80) return 'Pattern detected';
+    if (confidence >= 70) return 'Pattern likely detected';
+    if (confidence >= 60) return 'Possible match detected';
+    return 'Pattern not clearly detected';
   }
 
   String _getPatternDescription(String patternName) {
