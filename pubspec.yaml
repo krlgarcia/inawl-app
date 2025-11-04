@@ -89,6 +89,23 @@ flutter:
   - assets/model/fullwunkown.tflite
   - assets/model/labels.txt
 
+  fonts:
+    - family: ProximaNova
+      fonts:
+        - asset: assets/font/proximanova_regular.ttf
+          weight: 400
+        - asset: assets/font/proximanova_light.otf
+          weight: 300
+        - asset: assets/font/proximanova_bold.otf
+          weight: 700
+        - asset: assets/font/proximanova_boldit.otf
+          weight: 700
+          style: italic
+        - asset: assets/font/proximanova_extrabold.otf
+          weight: 800
+        - asset: assets/font/proximanova_black.ttf
+          weight: 900
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

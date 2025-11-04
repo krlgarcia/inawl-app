@@ -11,6 +11,7 @@ class AppTheme {
     return ThemeData(
       primarySwatch: _createMaterialColor(primaryColor),
       scaffoldBackgroundColor: backgroundColor,
+      fontFamily: 'ProximaNova',
       appBarTheme: const AppBarTheme(
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
