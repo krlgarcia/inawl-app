@@ -7,7 +7,7 @@ class ModelService {
   static Interpreter? _interpreter;
   static List<String>? _labels;
   
-  static const String modelPath = 'assets/model/effi_full.tflite';
+  static const String modelPath = 'assets/model/fullwunkown.tflite';
   static const String labelsPath = 'assets/model/labels.txt';
 
   /// Load the TFLite model and labels
@@ -21,8 +21,13 @@ class ModelService {
       
       // Load labels
       final labelsData = await rootBundle.loadString(labelsPath);
-      _labels = labelsData.split('\n').where((label) => label.trim().isNotEmpty).toList();
+      _labels = labelsData
+          .split('\n')
+          .map((label) => label.trim())  // Trim whitespace from each label
+          .where((label) => label.isNotEmpty)
+          .toList();
       print('✓ Loaded ${_labels!.length} labels');
+      print('  Labels: $_labels');
     } catch (e) {
       print('✗ Error loading model: $e');
       rethrow;

@@ -7,10 +7,14 @@ import 'package:inawl_app/widgets/pattern_banner.dart';
 class LibraryScreen extends StatelessWidget {
   const LibraryScreen({super.key});
 
+  // Pattern names for library display (excludes Unknown)
   static const List<String> patternNames = [
+    'BB Queen',
     'Bailabi',
     'Binaludan Diamond',
+    'Binaludto',
     'Diamond Magnet',
+    'Katompi',
     'Kinayupo',
     'Kinulipis',
     'Lumbayan',
@@ -22,12 +26,12 @@ class LibraryScreen extends StatelessWidget {
     'Sahaya',
     'Salimpukaw',
     'Sambit',
-    'Sara Design',
     'Siko Karwang',
     'Siku Andun',
     'Sultan',
     'Sunflower',
     'Tipas',
+    // Unknown is excluded from library display
   ];
 
   @override
@@ -66,10 +70,10 @@ class LibraryScreen extends StatelessWidget {
                         crossAxisSpacing: AppConstants.gridCrossAxisSpacing,
                         childAspectRatio: 0.75, // Adjust ratio to accommodate label
                       ),
-                      itemCount: ImageAssets.libraryImages.length,
+                      itemCount: ImageAssets.libraryDisplayImages.length,
                       itemBuilder: (context, index) {
                         return _buildImageCard(
-                          ImageAssets.libraryImages[index],
+                          ImageAssets.libraryDisplayImages[index],
                           patternNames[index],
                           context,
                         );

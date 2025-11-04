@@ -9,6 +9,7 @@ import 'package:inawl_app/core/constants/image_assets.dart';
 import 'package:inawl_app/core/routes/app_routes.dart';
 import 'package:inawl_app/services/model_service.dart';
 import 'package:inawl_app/screens/image_crop_screen.dart';
+import 'package:inawl_app/screens/unknown_pattern_screen.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -104,22 +105,45 @@ class _CameraScreenState extends State<CameraScreen> {
       final result = await ModelService.classifyImage(croppedImagePath);
       final predictedClass = result['predictedClass'] as String;
       final confidence = result['percentage'] as String;
+      final confidenceValue = double.tryParse(confidence) ?? 0.0;
       
-      // Find the matching library image
-      final patternIndex = ModelService.classNames.indexOf(predictedClass);
-      final imagePath = patternIndex >= 0 && patternIndex < ImageAssets.libraryImages.length
-          ? ImageAssets.libraryImages[patternIndex]
-          : ImageAssets.libraryImages[0];
+      // Check if Unknown or low confidence - use trim and case-insensitive comparison
+      final isUnknownClass = predictedClass.trim().toLowerCase() == 'unknown';
+      final isLowConfidence = confidenceValue < 60.0;
+      final shouldShowUnknown = isUnknownClass || isLowConfidence;
       
-      if (mounted) {
-        // Navigate to pattern screen with captured image and confidence
-        AppRoutes.navigateToPattern(
-          context,
-          predictedClass,
-          imagePath,
-          capturedImagePath: croppedImagePath,
-          confidence: confidence,
-        );
+      // Debug logging
+      debugPrint('Camera: "$predictedClass" @ $confidence% → ${shouldShowUnknown ? "Unknown" : "Pattern"} screen');
+      
+      // Navigate to appropriate screen
+      if (shouldShowUnknown) {
+        // Navigate to Unknown pattern screen
+        if (mounted) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => UnknownPatternScreen(
+                capturedImagePath: croppedImagePath,
+                confidence: confidence,
+              ),
+            ),
+          );
+        }
+      } else {
+        // High confidence known class - navigate to pattern screen
+        final patternIndex = ModelService.classNames.indexOf(predictedClass);
+        final imagePath = patternIndex >= 0 && patternIndex < ImageAssets.libraryImages.length
+            ? ImageAssets.libraryImages[patternIndex]
+            : ImageAssets.libraryImages[0];
+        
+        if (mounted) {
+          AppRoutes.navigateToPattern(
+            context,
+            predictedClass,
+            imagePath,
+            capturedImagePath: croppedImagePath,
+            confidence: confidence,
+          );
+        }
       }
     } catch (e) {
       debugPrint('Error taking picture: $e');

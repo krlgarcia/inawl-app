@@ -64,8 +64,11 @@ flutter:
 
   assets:
   - assets/images/generic-inaul.jpg
+  - assets/images/bbqueen.jpg
   - assets/images/bailabi.jpg
   - assets/images/binaludan_diamond.jpg
+  - assets/images/binaludto.jpg
+  - assets/images/binadan_katompi.jpg
   - assets/images/diamond_magnet.jpg
   - assets/images/kinayupo.jpg
   - assets/images/kinulipis.jpg
@@ -74,6 +77,7 @@ flutter:
   - assets/images/panigabi.jpg
   - assets/images/pine_tree.jpg
   - assets/images/pinundutan.jpg
+  - assets/images/pinya.jpg
   - assets/images/sahaya-sandaya.jpg
   - assets/images/salimpukaw.jpg
   - assets/images/sambit.jpg
@@ -82,7 +86,7 @@ flutter:
   - assets/images/sultan.jpg
   - assets/images/sunflower.jpg
   - assets/images/tipas.jpg
-  - assets/model/effi_full.tflite
+  - assets/model/fullwunkown.tflite
   - assets/model/labels.txt
 
   # An image asset can refer to one or more resolution-specific "variants", see
